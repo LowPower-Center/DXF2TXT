@@ -2,7 +2,6 @@
 import os
 from utils import *
 # This program show how to convert dxf elements to a list of points
-
 def process_dxf(dxf_file):
     # point = x ,y , z, index
     points = []

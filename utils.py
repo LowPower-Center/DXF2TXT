@@ -2,8 +2,10 @@ import ezdxf
 import math
 import numpy as np
 from scipy.interpolate import BSpline
-
+from ezdxf import path
+from ezdxf.math import ConstructionPolyline
 # This program show how to convert dxf elements to a list of points
+
 
 class Point:
     def __init__(self, x, y, z, index):
@@ -14,17 +16,22 @@ class Point:
 
 def spline2points(points,spline, idx,num = 50):
     # get the control points of the spline
-    control_points = np.array(spline.control_points)
-    degree = spline.dxf.degree
-    knots = spline.knots
-    # 计算参数t的范围
-    t_min = knots[degree]
-    t_max = knots[-degree - 1]
-    t_values = np.linspace(t_min, t_max, num)
-    # 生成B-spline曲线
-    spline = BSpline(knots, control_points, degree)
-    # 计算参数t对应的点
-    pts = np.array([spline(t) for t in t_values])
+    # control_points = np.array(spline.control_points)
+    # degree = spline.dxf.degree
+    # knots = spline.knots
+    # # 计算参数t的范围
+    # t_min = knots[degree]
+    # t_max = knots[-degree - 1]
+    # t_values = np.linspace(t_min, t_max, num)
+    # # 生成B-spline曲线
+    # spline = BSpline(knots, control_points, degree)
+    # # 计算参数t对应的点
+    # pts = np.array([spline(t) for t in t_values])
+    if spline is not None:
+        p = path.make_path(spline)
+        polyline = ConstructionPolyline(p.flattening(0.01))
+        # this also works for polylines including bulges (arcs)
+        pts = list(polyline.divide(2000))
     for point in pts:
         x = point[0]
         y = point[1]
@@ -71,13 +78,18 @@ def circle2points(points,circle, idx ,num = 50,):
     points.append(start_point)
 
 def lwpolyline2points(points,lwpolyline, idx):
-    # get the points of the lwpolyline
-    points_list = lwpolyline.get_points()
-    # generate the points
-    for p in points_list:
-        points.append(Point(p[0], p[1], p[2], idx))
-    if lwpolyline.is_closed:
-        points.append(Point(points_list[0][0], points_list[0][1], points_list[0][2], idx))
+    if lwpolyline is not None:
+        p = path.make_path(lwpolyline)
+        polyline = ConstructionPolyline(p.flattening(0.01))
+        # this also works for polylines including bulges (arcs)
+        pts = list(polyline.divide(2000))
+    for point in pts:
+        x = point[0]
+        y = point[1]
+        z = point[2]
+        points.append(Point(x, y, z, idx))
+
+
 def line2points(points,line, idx):
     # get the start point of the line
     x1 = line.dxf.start[0]
@@ -96,6 +108,8 @@ def points2txt(points,fileName = "ccfPath.txt",z = 0.5):
     f.close()
 
 def element2points(points,element, idx):
+    dxftype = element.dxftype()
+
     if element.dxftype() == "LINE":
         line2points(points,element, idx)
     elif element.dxftype() == "LWPOLYLINE":
