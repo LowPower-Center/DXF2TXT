@@ -1,7 +1,6 @@
 import ezdxf
 import math
 import numpy as np
-from scipy.interpolate import BSpline
 from ezdxf import path
 from ezdxf.math import ConstructionPolyline
 # This program show how to convert dxf elements to a list of points
@@ -15,18 +14,6 @@ class Point:
         self.index = index
 
 def spline2points(points,spline, idx,num = 50):
-    # get the control points of the spline
-    # control_points = np.array(spline.control_points)
-    # degree = spline.dxf.degree
-    # knots = spline.knots
-    # # 计算参数t的范围
-    # t_min = knots[degree]
-    # t_max = knots[-degree - 1]
-    # t_values = np.linspace(t_min, t_max, num)
-    # # 生成B-spline曲线
-    # spline = BSpline(knots, control_points, degree)
-    # # 计算参数t对应的点
-    # pts = np.array([spline(t) for t in t_values])
     if spline is not None:
         p = path.make_path(spline)
         polyline = ConstructionPolyline(p.flattening(0.01))
