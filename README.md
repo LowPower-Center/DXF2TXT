@@ -30,4 +30,4 @@ python3
 
 ezdxf
 
-numpy
+pyinstaller
