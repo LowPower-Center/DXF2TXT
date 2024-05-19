@@ -14,9 +14,11 @@
 表示从(0,0)到(1,1)的一条线段
 
 # usage
-将所有文件下载到一个文件夹，然后运行dxfReader.py文件
+可以使用pyinstall打包本文件，用法为 pyinstall -F dxfReader.py
 
-程序会把运行目录下所有能找到的dxf转换为同名txt文件
+
+若要使用，则为
+./dxfReader.exe -o output.txt input.dxf
 
 # tips
 
