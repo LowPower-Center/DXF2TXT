@@ -96,11 +96,13 @@ def points2txt(points,fileName = "ccfPath.txt",z_list = None):
         z = z_list[0]
         end = z_list[1]
         step = z_list[2]
+        index = 0
         with open(fileName, "w") as f:
             while z < end:
                 for p in points:
-                    f.write(f"{p.x} {p.y} {z} {p.index}\n")
+                    f.write(f"{p.x} {p.y} {z} {p.index+index}\n")
                 z += step
+                index += 1
     else:
         with open(fileName, "w") as f:
             for p in points:
