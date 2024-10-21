@@ -14,17 +14,26 @@
 表示从(0,0)到(1,1)的一条线段
 
 # usage
-可以使用pyinstall打包本文件，用法为 pyinstall -F dxfReader.py
+可以使用pyinstall打包本文件，用法为 
+
+
+pyinstaller -F dxfReader.py
 
 
 若要使用，则为
+
 ./dxfReader.exe -o output.txt input.dxf
+
+或者
+
+./dxfReader.exe -o output.txt -f input1.dxf -f input2.dxf -f input3.dxf ...
 
 # tips
 
-绘制dxf的时候，多段线应该使用polyline绘制，而不是若干line的组合。
+最理想的情况:
+dxf的元素中只包含polyline/lwpolyline/spline，不包含其他元素。
 
-最理想的情况是，dxf的元素中只包含polyline/lwpolyline/spline，不包含其他元素。
+目前可以对多个line进行合并，或者混合类型合并
 
 # requirements
 
