@@ -224,7 +224,7 @@ def main():
     parser.add_option("-o", "--output", action="store", type="string", dest="output",
                       help="path to write txt file to")
     parser.add_option("-z", "--z_list", action="store", type="string", dest="z_list",
-                      help="z_list to generate multi layer txt file")
+                      help="z_list to generate multi layer txt file, format: z_start,z_end,z_step,or z1,z2,z3,z4,...,zn")
     parser.add_option("-f", "--file", action="append", type="string", dest="file",)
 
     (options, args) = parser.parse_args()
@@ -246,7 +246,6 @@ def main():
             if options.output is None:
                 raise ValueError("outputfilename is required for multiple files")
             for i,f in enumerate(options.file):
-                #z_list = [z_origin[0] + i*z_origin[2] + j*z_origin[2]*len(options.file) for j in range(int((z_origin[1] - z_origin[0])/z_origin[2]/len(options.file) + 1))]
                 process_dxf(f,output_name,process_zlist(options),mode="a")
 
         else:
