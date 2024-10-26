@@ -124,11 +124,19 @@ def circle2points(points,circle, idx ,num = 150,):
         points.append(Point(px, py, z, idx))
     points.append(start_point)
 
-def lwpolyline2points(points,lwpolyline, idx,num=150):
+def lwpolyline2points(points,lwpolyline, idx,num=500):
     if lwpolyline is not None:
         p = path.make_path(lwpolyline)
         polyline = ConstructionPolyline(p.flattening(0.01))
         # this also works for polylines including bulges (arcs)
+        # 计算多段线长度
+        length = 100
+        vertices = list(lwpolyline.vertices())  # 获取顶点
+        for i in range(1,len(vertices)):
+            p1 = vertices[i-1]
+            p2 = vertices[i]
+            length += math.sqrt((p1[0]-p2[0])**2 + (p1[1]-p2[1])**2)
+        num =  int(length)
         pts = list(polyline.divide(num))
     for point in pts:
         x = point[0]
@@ -226,30 +234,23 @@ def main():
     parser.add_option("-z", "--z_list", action="store", type="string", dest="z_list",
                       help="z_list to generate multi layer txt file, format: z_start,z_end,z_step,or z1,z2,z3,z4,...,zn")
     parser.add_option("-f", "--file", action="append", type="string", dest="file",)
-
     (options, args) = parser.parse_args()
-
     output_name = options.output
-    if args :  # process single file
-        dxf_file = args[0]
-        if options.z_list is not None:
-            process_dxf(dxf_file,output_name,process_zlist(options))
-        else:
-            process_dxf(dxf_file,output_name)
-    else:
-        if options.file is not None:
-            if options.z_list is not None:
-                z_list = options.z_list.split(',')
-                z_origin = [float(z) for z in z_list]
-            else:
-                raise ValueError("z_list is required for multiple files")
-            if options.output is None:
-                raise ValueError("outputfilename is required for multiple files")
-            for i,f in enumerate(options.file):
-                process_dxf(f,output_name,process_zlist(options),mode="a")
 
+    if options.file is not None:
+        if options.z_list is not None:
+            z_list = options.z_list.split(',')
+            z_origin = [float(z) for z in z_list]
         else:
-            raise ValueError("No file is provided")
+            raise ValueError("z_list is required for multiple files")
+        if options.output is None:
+            raise ValueError("outputfilename is required for multiple files")
+        for i,f in enumerate(options.file):
+            process_dxf(f,output_name,process_zlist(options),"a" if i else "w")
+
+
+    else:
+        raise ValueError("No file is provided")
 
 if __name__ == '__main__':
     main()
